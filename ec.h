@@ -1,2 +1,4 @@
-void ec_init(void);
-void ec_read(long *ec, long *temp);
+#ifndef EC_H
+#define EC_H
+void ec_read(int *ec, int *temp);
+#endif

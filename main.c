@@ -16,25 +16,21 @@ void delay_s(unsigned int n)
 
 void main()
 {
-	long ec, temp; 
-	UartInit();
-	//print_str("111ec_init       ");
-	//ec_init();
-	//print_str("222ec_init       ");
+	int ec, temp; 
+
+	print_str("start\r\n");
+
 	for(;;)
 	{
-		//ec = 1123;
-		//temp = 33;
 		delay_s(10);
-		//print_str("111_ec_read\n");
-		//ec_read(&ec, &temp);
-		//print_str("222_ec_read\n");
+		print_str("111_ec_read\r\n");
+		ec_read(&ec, &temp);
+		print_str("222_ec_read\r\n");
 		print_str("ec  : ");
-		print_l2c(ec);
-		print_str("   ");
+		print_int(ec);
+		print_str("\r\n");
 		print_str("temp: ");
-		print_l2c(temp);
-		print_str("   ");
+		print_int(temp);
+		print_str("\r\n");
 	}
-	while(1);
 }
