@@ -1,88 +1,84 @@
+/********************************************************************
+ * 实验名称： Wk2XXX写寄存器方式（一次一字节）收发数据例程
+ * 选配书籍：	上册-《深入浅出STC8增强型51单片机进阶攻略》已经出版
+							下册-《深入浅出STC8增强型51单片机实战攻略》还在写作
+ * 书籍作者：	龙顺宇编著 清华大学出版社出版
+ * 淘宝店铺：	https://520mcu.taobao.com/
+ * 实验平台：	思修电子STC8“战将”系列小王子开发板
+ * 芯片型号：	STC8H8K64U-LQFP64（程序微调后可移植至STC其他系列单片机）
+ * 时钟说明：	片内IRC高速24MHz时钟，使用STC-ISP下载程序时配置
+ * 串口速率： STC8H8K64U单片机：115200bps；模块子串口：14400bps
+ * 接线说明： SX-UART-A V3.6模块的RX=P3.1，TX=P3.0，RS=P3.6
+********************************************************************/
+#include "UART.h"
 #include <reg52.h>
-#include <string.h>
-#include "intrins.h"
-#include "uart.h"
-typedef unsigned char uchar;
-
-sbit UART_TX = P1^1;
-sbit UART_RX = P1^0;
-
-void uart_init()
+/**********************用户自定义数据区域***************************/
+u8 UART_buff[4] = {0};	//设置接收缓冲区
+u8 UART_num;						//设置接收数据个数，要比缓冲数组规格小
+u8 UART_Rflag;					//uart接收数据完成标志
+/********************************************************************
+UART初始化函数UART_init()，无形参，无返回值
+********************************************************************/
+void UART_init()
 {
-
-	SCON  = 0x50;     // SCON: serail mode 1, 8-bit UART
-	TMOD |= 0x21;     // T0工作在方式1，十六位定时
-	PCON |= 0x80;     // SMOD=1;
-	// 定时器0初始值，延时417us，目的是令模拟串口的波特率为4800bps fosc=11.0592MHz
-	// 定时器0初始值，延时417us，目的是令模拟串口的波特率为4800bps fosc=11.0592MHz
-	TH0 = (65536 - 192) / 256;
-	TL0 = (65536 - 192) % 256;
+	//115200bps@24.000MHz
+	SCON = 0x50;		//8位数据,可变波特率
+	//AUXR |= 0x40;		//定时器时钟1T模式
+	//AUXR &= 0xFE;		//串口1选择定时器1为波特率发生器
+	TMOD &= 0x0F;		//设置定时器模式
+	TL1 = 0xCC;			//设置定时初始值
+	TH1 = 0xFF;			//设置定时初始值
+	ET1 = 0;				//禁止定时器中断
+	TR1 = 1;				//定时器1开始计时
+	ES = 1;      		//打开串口中断
+	EA = 1;      		//开总中断
+	UART_num = 0;
+	UART_Rflag = 0;
 }
-
-void uart_sleep_4800(void)
+/*******************************************************************
+单个字节发送函数UART_SendByte(u8 dat)，有形参data，无返回值
+********************************************************************/
+void UART_SendByte(u8 dat)
 {
-
-	while(!TF0);
-	TF0=0;
-		// 定时器0初始值，延时417us，目的是令模拟串口的波特率为4800bps fosc=11.0592MHz
-	// 定时器0初始值，延时417us，目的是令模拟串口的波特率为4800bps fosc=11.0592MHz
-   	TH0 = (65536 - 192) / 256;
-	TL0 = (65536 - 192) % 256;
-
-	
+	SBUF = dat;
+	while(!TI);//等待接收完成
+	TI = 0;
 }
-
-void write_byte(uchar input)
+/*******************************************************************
+发送字符串函数UART_SendStr(u8 *s)有形参s为要发送到字符串，无返回值
+********************************************************************/
+void UART_SendStr(u8 *s)
 {
-	uchar i = 8;
-	
-	// start timer
-	TR0 = 1;
-	
-	// start bit
-	UART_TX=(bit)0;
-	uart_sleep_4800();
-	
-	//data bit
-	while(i--)
+ while(*s!='\0')// \0 表示字符串结束标志，通过检测是否字符串末尾
+  {
+	UART_SendByte(*s);
+	s++;
+  }
+}
+/*******************************************************************
+UART的中断服务函数UART_SER (void)，无形参，无返回值
+********************************************************************/
+void UART_SER (void) interrupt 4 //串行中断服务程序
+{
+	static unsigned char i = 0;//定义临时变量 
+	if(RI)//判断是接收中断产生
 	{
-	   UART_TX =(bit)(input & 0x01);      //先传低位
-	   uart_sleep_4800();
-	   input >>= 1;
+
+		if(!UART_Rflag)//数据接收未完成
+		{ 
+			RI=0; //清接收标志位		
+			UART_buff[i]=SBUF;//读入缓冲区的值
+			if(i>=UART_num-1)
+			{
+				i =0;
+				UART_Rflag = 1;//数据接收完成标志
+			}
+			else 
+			{
+				i++;
+			}
+		}	
 	}
-	
-	// stop bit
-	UART_TX=(bit)1;
-	uart_sleep_4800();
-	
-	// stop timer
-	TR0=0;
-}
-
-void print_str(const char *str)
-{
-	int i, len = strlen(str);
-
-	uart_init();
-	for (i = 0; i <len; i++)
-		   write_byte(str[i]);
-}
-
-void print_int(int n)
-{
-	int i = 0, j;	
-	char c[20] = {'0'};
-
-	uart_init();
-	if (n == 0) {
-		write_byte('0');
-		return;
-	}
-	while(n)
-	{
-		c[i++] = ((n % 10) +'0');
-		n /= 10;
-	}
-	for(j = i - 1; j >= 0; j--)
-		write_byte(c[j]);
-}
+	if(TI)//如果是发送标志位，清零
+	TI=0;
+} 
