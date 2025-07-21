@@ -5,6 +5,7 @@
 #include "intrins.h"
 #include "print.h"
 #include "ec.h"
+#include "dtu.h"
 
 #include "uart.h"
 #include "wk2xxx.h"
@@ -32,7 +33,8 @@ void main(void)
 
 	// init print
 	print_init();
-	ec_init();	
+	ec_init();
+	dtu_init();	
 	P2 = 0xfd;delay_s(2);
 	//配置子串口的波特率
 
@@ -53,6 +55,7 @@ void main(void)
 		print_str("temp: ");
 		print_num(temp);
 		print_str("\r\n");
+		dtu_send(ec, temp, 7);
 		P0 = 1 << 1;delay_s(1);
 //		WK2XXX_Write_REG_SendString(2, "hello2\r\n");
 //		

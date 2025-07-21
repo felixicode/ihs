@@ -17,11 +17,7 @@ void write_byte(char input)
 
 void print_str(const char *str)
 {
-	//WK2XXX_Write_REG_SendString(IHS_UART_PRINT, str);
-	while (*str != 0) {
-		WK2XXX_Write_REG_SendByte(IHS_UART_PRINT, *str);
-		str++;
-	}
+	WK2XXX_Write_REG_SendString(IHS_UART_PRINT, str);
 }
 
 void print_num(int n)

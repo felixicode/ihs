@@ -7,12 +7,9 @@
  * 功能描述：串口外接单路EC电导率模块读取浓度数据，在LCD1602液晶屏显示浓度数据
  * 使用说明：先下载好程序再接线
 **********************************************************************************/
-#include "reg51.h"
+#include <reg52.h>
 #include "intrins.h"
-#include "ec.h"
 #include "wk2xxx.h"
-
-
 
 void ec_init(void)
 {

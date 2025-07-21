@@ -15,6 +15,7 @@
 
 #define IHS_UART_PRINT 1
 #define IHS_UART_EC 2
+#define IHS_UART_DTU 3
 
 /**********************WK2xxx的寄存器地址*************************/
 //全局寄存器地址
