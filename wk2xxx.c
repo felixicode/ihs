@@ -123,6 +123,40 @@ void WK2XXX_UTx_Init(u8 num,u16 baud)
   WK2XXX_Write_REG(num,WK2XXX_BAUD0,baud);   //子串口波特率低位
   WK2XXX_Write_REG(num,WK2XXX_SPAGE,WK2XXX_SPAGE0);//选择子串口页控制器0
 }
+
+/********************************************************************
+WK2XXX写寄存器方式接收数据函数WK2XXX_Write_REG_ReceiveByte(u8 num)
+形参num为子串口号，有返回值Data为子串口FIFO数据寄存器的值
+********************************************************************/
+u8 WK2XXX_Write_REG_ReceiveByte(u8 num)
+{
+  u8 Data;
+  while(!((WK2XXX_Read_REG(num,WK2XXX_FSR))&0x08));
+  Data =WK2XXX_Read_REG(num,WK2XXX_FDAT);//接收子串口FIFO数据寄存器的值
+  return Data;
+}
+/********************************************************************
+WK2XXX写寄存器方式发送数据函数WK2XXX_Write_REG_SendByte(u8 num,u8 dat)
+形参num为子串口号，dat为要发送的数据，无返回值
+********************************************************************/
+void WK2XXX_Write_REG_SendByte(u8 num,u8 dat)
+{
+  WK2XXX_Write_REG(num,WK2XXX_FDAT,dat);
+}
+/********************************************************************
+WK2XXX发送字符串函数WK2XXX_Write_REG_SendString(u8 num,u8 *buff)
+形参num为子串口号，buff为要写入的数据的指针，无返回值
+********************************************************************/
+void WK2XXX_Write_REG_SendString(u8 num,u8 *buff)
+{
+  while(*buff!='\0')// '\0 '表示字符串结束标志，
+  {
+    WK2XXX_Write_REG(num,WK2XXX_FDAT,*buff);
+    buff++;
+  }
+}
+
+#if 0
 /********************************************************************
 WK2XXX读FIFO函数WK2XXX_Read_FIFO(u8 num,u8 count,u8 *fifo_buff)
 形参num为子串口号，count为要接收的个数，fifo_buff为数据暂存指针，无返回值
@@ -183,37 +217,6 @@ void WK2XXX_Write_FIFO(u8 num,u8 count,u8 *fifo_buff)
   UART_SendStr(fifo_buff);//发送数据
 }
 /********************************************************************
-WK2XXX写寄存器方式接收数据函数WK2XXX_Write_REG_ReceiveByte(u8 num)
-形参num为子串口号，有返回值Data为子串口FIFO数据寄存器的值
-********************************************************************/
-u8 WK2XXX_Write_REG_ReceiveByte(u8 num)
-{
-  u8 Data;
-  while(!((WK2XXX_Read_REG(num,WK2XXX_FSR))&0x08));
-  Data =WK2XXX_Read_REG(num,WK2XXX_FDAT);//接收子串口FIFO数据寄存器的值
-  return Data;
-}
-/********************************************************************
-WK2XXX写寄存器方式发送数据函数WK2XXX_Write_REG_SendByte(u8 num,u8 dat)
-形参num为子串口号，dat为要发送的数据，无返回值
-********************************************************************/
-void WK2XXX_Write_REG_SendByte(u8 num,u8 dat)
-{
-  WK2XXX_Write_REG(num,WK2XXX_FDAT,dat);
-}
-/********************************************************************
-WK2XXX发送字符串函数WK2XXX_Write_REG_SendString(u8 num,u8 *buff)
-形参num为子串口号，buff为要写入的数据的指针，无返回值
-********************************************************************/
-void WK2XXX_Write_REG_SendString(u8 num,u8 *buff)
-{
-  while(*buff!='\0')// '\0 '表示字符串结束标志，
-  {
-    WK2XXX_Write_REG(num,WK2XXX_FDAT,*buff);
-    buff++;
-  }
-}
-/********************************************************************
 WK2XXX写FIFO方式发送数据函数WK2XXX_Write_FIFO_SendData(u8 num,u8 *fifo_buff)
 形参num为子串口号，fifo_buff为发送数据指针，无返回值
 ********************************************************************/
@@ -242,3 +245,4 @@ void WK2XXX_REG_Receive_And_Send(u8 num)
 		//将接收到的数据返回
   }
 }
+#endif

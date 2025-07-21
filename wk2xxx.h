@@ -181,9 +181,9 @@ u8 WK2XXX_Read_REG(u8 num,u8 reg);
 //WK2XXX读子串口寄存器函数
 void WK2XXX_Write_REG(u8 num,u8 reg,u8 dat);
 //WK2XXX写子串口寄存器函数
-void WK2XXX_Read_FIFO(u8 num,u8 count,u8 *fifo_buff);
+//void WK2XXX_Read_FIFO(u8 num,u8 count,u8 *fifo_buff);
 //WK2XXX读FIFO函数
-void WK2XXX_Write_FIFO(u8 num,u8 count,u8 *fifo_buff);
+//void WK2XXX_Write_FIFO(u8 num,u8 count,u8 *fifo_buff);
 //WK2XXX写FIFO函数
 //写寄存器方式收发数据调用
 void WK2XXX_Write_REG_SendString(u8 num,u8 *buff);
@@ -192,12 +192,12 @@ u8 WK2XXX_Write_REG_ReceiveByte(u8 num);
 //WK2XXX写寄存器方式接收数据函数
 void WK2XXX_Write_REG_SendByte(u8 num,u8 dat);
 //WK2XXX写寄存器方式发送数据函数
-void WK2XXX_REG_Receive_And_Send(u8 num);
+//void WK2XXX_REG_Receive_And_Send(u8 num);
 //WK2XXX写寄存器方式数据收发一体函数
 //写FIFO方式收发数据调用
-void WK2XXX_Write_FIFO_ReceiveData(u8 num,u8 *fifo_buff);
+//void WK2XXX_Write_FIFO_ReceiveData(u8 num,u8 *fifo_buff);
 //写FIFO方式发送数据函数
-void WK2XXX_Write_FIFO_SendData(u8 num,u8 *fifo_buff);
+//void WK2XXX_Write_FIFO_SendData(u8 num,u8 *fifo_buff);
 //写FIFO方式接收数据函数
 
 #endif

@@ -1,43 +1,39 @@
- /**********************************************************************************
- * 描述    ：STC89C52RC, 晶振11.0592MHz, 波特率：9600, 串口读取单路EC电导率模块浓度数据 
- * 硬件连接：        
- * LCD1602：RS -> P2.5; RW -> P2.6; E -> P2.7;
- *          D0~D7 -> P0口
- * 单路EC电导率模块：3.3V -> 3.3V; RX -> 3.1; TX -> P3.0; GND -> GND;  
- * 功能描述：串口外接单路EC电导率模块读取浓度数据，在LCD1602液晶屏显示浓度数据
- * 使用说明：先下载好程序再接线
-**********************************************************************************/
 #include <reg52.h>
 #include "intrins.h"
 #include "wk2xxx.h"
+#include "print.h"
 
 void ec_init(void)
 {
-	WK2XXX_UTx_Init(IHS_UART_EC,WK2XXX_BAUD_9600);	//子串口1波特率为14400bps
+	WK2XXX_UTx_Init(IHS_UART_EC,WK2XXX_BAUD_9600);
 }
 
-static void write_byte(char input)
+static void write_byte(u8 input)
 {
-	WK2XXX_Write_REG_SendByte(IHS_UART_EC, input);//使用子串口2发送字符串
+	WK2XXX_Write_REG_SendByte(IHS_UART_EC, input);
 }
 
-static char read_byte(void)
+static u8 read_byte(void)
 {
 	return WK2XXX_Write_REG_ReceiveByte(IHS_UART_EC);
 }
 
-void ec_read(int *ec, int *temp)
+void ec_read(int *ec, float *temp)
 {
-	char c;
-	
+	unsigned char c;
+	unsigned int wd;
+
+	UART_num=6;
+	UART_Rflag=0;
+	*ec = *temp = 0;
 	// send frame head
 	write_byte(0xA0);
-	
+
 	write_byte(0x00);	
 	write_byte(0x00);
 	write_byte(0x00);
 	write_byte(0x00);
-	
+
 	// send frame tail
 	write_byte(0xA0);
 	delay_ms(100);
@@ -49,23 +45,32 @@ void ec_read(int *ec, int *temp)
 		*temp = 99;
 		return;
 	}
-	
+
 	// read diandao
 	*ec = read_byte();
 	*ec <<= 8;
 	*ec |= read_byte();
-	
+
+	if (*ec > 3000)
+		*ec = 3000;
+
 	// read temperatur
-	*temp = read_byte();
-	*temp <<= 8;
-	*temp |= read_byte();
-	
+	wd = read_byte();
+	wd<<= 8;
+	wd |= read_byte();
+	*temp = (float)wd / 100.0;
+
 	// read frame tail
 	c = read_byte();
-	if (c != 0x40) {
-		*ec = *temp = 9998;
-		return;
+#if 0 // debug
+	print_str("EC NewLoop: ");
+	for (i = 0; i < 6; i++) {
+		c = read_byte();
+		print_charx(c);
+		print_str(" ");
 	}
+	print_str("\r\n");
+#endif
 }
 
 

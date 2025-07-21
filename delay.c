@@ -38,3 +38,13 @@ void delay_ms(u16 t)
     delay_us(1000);
   }
 }
+
+void delay_s(u16 n)
+{
+          u16 i, j;
+
+          for (i = 0; i < n; i++) {
+                       for (j = 0; j < 20000; j++)
+                        _nop_();
+          }
+}
