@@ -12,6 +12,10 @@
 #else 
 #define FOSE_11_0592MHz	//WK2XXX晶振频率使用11.0592MHz
 #endif
+
+#define IHS_UART_PRINT 1
+#define IHS_UART_EC 2
+
 /**********************WK2xxx的寄存器地址*************************/
 //全局寄存器地址
 #define 	WK2XXX_GENA     0x00
