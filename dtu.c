@@ -1,7 +1,10 @@
+#include "STC89C5xRC.H"
 #include "uart.h"
 #include "wk2xxx.h"
 #include "print.h"
 #include "dtu.h"
+
+sbit DTU_TO_MQTT = P3^7; // 将P3.7 接GND 会向MQTT发消息, 否则不发送
 
 void dtu_init(void)
 {
@@ -26,6 +29,7 @@ void dtu_send(int ec, float temp, float ph)
 	format_json(ec, temp, ph, str);
 	print_str(str);
 	print_str("\r\n");
-	return;
-	WK2XXX_Write_REG_SendString(IHS_UART_DTU, str);
+
+	if (DTU_TO_MQTT == 0)
+		WK2XXX_Write_REG_SendString(IHS_UART_DTU, str);
 }
