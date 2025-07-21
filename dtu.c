@@ -23,9 +23,10 @@ int format_json(float ph, int ec, int temp, char* str)
 
 void dtu_send(int ec, int temp, float ph)
 {
+
 	char str[20];
 	
 	format_json(ph, ec, temp, str);
-	
+	return;	
 	WK2XXX_Write_REG_SendString(IHS_UART_DTU, str);
 }
