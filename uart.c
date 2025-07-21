@@ -62,12 +62,10 @@ void UART_SER (void) interrupt 4 //串行中断服务程序
 		{ 
 			RI=0; //清接收标志位		
 			UART_buff[i++]=SBUF;//读入缓冲区的值
-			if(i >= (UART_num-1)) {
+			if(i >= UART_num) {
 				i = 0;
 				UART_Rflag = 1;//数据接收完成标志
 			}
-
-			
 		}	
 	}
 //	if(TI)//如果是发送标志位，清零

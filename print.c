@@ -17,23 +17,27 @@ void write_byte(char input)
 
 void print_str(const char *str)
 {
-	WK2XXX_Write_REG_SendString(IHS_UART_PRINT, str);
+	//WK2XXX_Write_REG_SendString(IHS_UART_PRINT, str);
+	while (*str != 0) {
+		WK2XXX_Write_REG_SendByte(IHS_UART_PRINT, *str);
+		str++;
+	}
 }
 
-//void print_int(int n)
-//{
-//	int i = 0, j;	
-//	char c[20] = {'0'};
-//
-//	if (n == 0) {
-//		write_byte('0');
-//		return;
-//	}
-//	while(n)
-//	{
-//		c[i++] = ((n % 10) +'0');
-//		n /= 10;
-//	}
-//	for(j = i - 1; j >= 0; j--)
-//		write_byte(c[j]);
-//}
+void print_num(int n)
+{
+	int i = 0, j;	
+	char c[20] = {'0'};
+
+	if (n == 0) {
+		write_byte('0');
+		return;
+	}
+	while(n)
+	{
+		c[i++] = ((n % 10) +'0');
+		n /= 10;
+	}
+	for(j = i - 1; j >= 0; j--)
+		write_byte(c[j]);
+}

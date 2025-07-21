@@ -4,7 +4,7 @@
 #include "STC89C5xRC.H"
 #include "intrins.h"
 #include "print.h"
-//#include "ec.h"
+#include "ec.h"
 
 #include "uart.h"
 #include "wk2xxx.h"
@@ -23,6 +23,7 @@ void delay_s(unsigned int n)
 /******************************主函数区域****************************/
 void main(void)
 { 
+	int ec = 0, temp = 0;
 	//配置P3.6为推挽输出模式
 	//P3M0|=0x40;			//P3M0.6=1
 	//P3M1&=0xBF;			//P3M1.6=0
@@ -31,7 +32,7 @@ void main(void)
 
 	// init print
 	print_init();
-	
+	ec_init();	
 	P2 = 0xfd;delay_s(2);
 	//配置子串口的波特率
 
@@ -45,8 +46,14 @@ void main(void)
 		P0 = 1 << 0;delay_s(1);
 		print_str("hello uart\r\n");
 //		WK2XXX_Write_REG_SendString(1, "hello1\r\n");
-//		
-//		P0 = 1 << 1;delay_s(1);
+		ec_read(&ec, &temp);
+		print_str("ec  : ");
+		print_num(ec);
+		print_str("\r\n");
+		print_str("temp: ");
+		print_num(temp);
+		print_str("\r\n");
+		P0 = 1 << 1;delay_s(1);
 //		WK2XXX_Write_REG_SendString(2, "hello2\r\n");
 //		
 //		P0 = 1 << 2;delay_s(1);

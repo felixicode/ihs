@@ -12,14 +12,21 @@
 #include "ec.h"
 #include "wk2xxx.h"
 
+
+
+void ec_init(void)
+{
+	WK2XXX_UTx_Init(IHS_UART_EC,WK2XXX_BAUD_9600);	//子串口1波特率为14400bps
+}
+
 static void write_byte(char input)
 {
-	WK2XXX_Write_REG_SendByte(2,input);//使用子串口2发送字符串
+	WK2XXX_Write_REG_SendByte(IHS_UART_EC, input);//使用子串口2发送字符串
 }
 
 static char read_byte(void)
 {
-	return WK2XXX_Write_REG_ReceiveByte(2);
+	return WK2XXX_Write_REG_ReceiveByte(IHS_UART_EC);
 }
 
 void ec_read(int *ec, int *temp)
@@ -36,12 +43,13 @@ void ec_read(int *ec, int *temp)
 	
 	// send frame tail
 	write_byte(0xA0);
-	
+	delay_ms(100);
 
 	// read frame head
 	c = read_byte();
 	if (c != 0xAA) {
-		*ec = *temp = 9999;
+		*ec = c;
+		*temp = 99;
 		return;
 	}
 	
