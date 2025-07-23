@@ -39,6 +39,11 @@ void delay_ms(u16 t)
   }
 }
 
+void delay_10us(u16 ten_us)
+{
+	while(ten_us--);	
+}
+
 void delay_s(u16 n)
 {
           u16 i, j;

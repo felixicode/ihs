@@ -19,14 +19,20 @@
 #include "dtu.h"
 #include "uart.h"
 #include "wk2xxx.h"
+#include "rtc.h"
 
 #define VERSION "Version: IHS - v250722"
 
 void main(void)
 { 
-	int ec = 0;
+	xdata char arr[32];
 	float temp = 0;
+	int ec = 0;
 
+#ifdef RTC_SET
+	rtc_set_date_time(0x25, 0x07, 0x23, 0x22, 0x06, 0x00);
+	rtc_set_week_day(3);
+#endif
 	WK2XXX_Init();
 
 	print_init();
@@ -37,15 +43,17 @@ void main(void)
 	print_str("Author: Felix Zhang <felixicode@163.com>\r\n"); 
 	print_str(VERSION"\r\n\r\n");
 
-
 	P2 = 0xAA;
 
-	while (1) {
+	while (1) 
+	{
+		rtc_read(arr, 32);
+		print_str(arr);
+		print_str("\r\n");
 		P2 = ~P2;
 
 		ec_read(&ec, &temp);
-		dtu_send(ec, temp, 7.5);
-
+		dtu_send(ec, temp, 7.5, arr);
 		delay_s(2);
 	}
 }

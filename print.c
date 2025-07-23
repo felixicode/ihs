@@ -15,12 +15,12 @@ void print_str(const char *str)
 	WK2XXX_Write_REG_SendString(IHS_UART_PRINT, str);
 }
 
-#if 0
+#if 1
 void print_num(int n)
 {
 	xdata char str[20] = {'0'};
 
-	sprintf(str, "%d", n);
+	sprintf(str, "%x", n);
 	WK2XXX_Write_REG_SendString(IHS_UART_PRINT, str);
 }
 
