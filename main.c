@@ -47,11 +47,9 @@ void main(void)
 
 	while (1) 
 	{
-		rtc_read(arr, 32);
-		print_str(arr);
-		print_str("\r\n");
 		P2 = ~P2;
 
+		rtc_read(arr, 32);
 		ec_read(&ec, &temp);
 		dtu_send(ec, temp, 7.5, arr);
 		delay_s(2);
