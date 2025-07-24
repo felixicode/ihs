@@ -20,13 +20,14 @@
 #include "uart.h"
 #include "wk2xxx.h"
 #include "rtc.h"
+#include "ph.h"
 
 #define VERSION "Version: IHS - v250724"
 
 void main(void)
 { 
 	xdata char arr[32];
-	float temp = 0;
+	float temp = 0, ph = 0;
 	int ec = 0;
 
 #ifdef RTC_SET
@@ -51,7 +52,8 @@ void main(void)
 
 		rtc_read(arr, 32);
 		ec_read(&ec, &temp);
-		dtu_send(ec, temp, 7.5, arr);
+		ph = ph_read();
+		dtu_send(ec, temp, ph, arr);
 		delay_s(2);
 	}
 }
