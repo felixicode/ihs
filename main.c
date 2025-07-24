@@ -21,7 +21,7 @@
 #include "wk2xxx.h"
 #include "rtc.h"
 
-#define VERSION "Version: IHS - v250722"
+#define VERSION "Version: IHS - v250724"
 
 void main(void)
 { 
