@@ -4,7 +4,7 @@
 #include "print.h"
 #include "ph_i2c.h"
 
-// 
+//
 #define PCF8591_ADDR	0x90
 #define PCF8591_ADDR_R	0x91
 
@@ -31,6 +31,6 @@ float ph_read(void)
 		v = 14.0;
 	else if (v < 0)
 		v = 0;
-	
+
 	return v;
 }
