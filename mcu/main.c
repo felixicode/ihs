@@ -22,7 +22,7 @@
 #include "rtc.h"
 #include "ph.h"
 
-#define VERSION "Version: IHS - v250724 - 02"
+#define VERSION "Version: IHS - v250724 - 2"
 
 void main(void)
 { 
@@ -54,6 +54,6 @@ void main(void)
 		ec_read(&ec, &temp);
 		ph = ph_read();
 		dtu_send(ec, temp, ph, arr);
-		delay_s(2);
+		delay_s(10);
 	}
 }
