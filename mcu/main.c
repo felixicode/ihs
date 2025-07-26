@@ -22,7 +22,7 @@
 #include "rtc.h"
 #include "ph.h"
 
-#define VERSION "Version: IHS - v250724 - 2"
+#define VERSION "Version: IHS - v250726"
 
 void main(void)
 { 
