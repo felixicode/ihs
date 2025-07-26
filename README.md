@@ -1,4 +1,4 @@
-# Intelligent Hydronponic System
+# Intelligent Hydronponic System (智能水培系统）
 
 
 ## MCU 单片机
